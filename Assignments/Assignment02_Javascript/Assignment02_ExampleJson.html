@@ -1,0 +1,29 @@
+<html>
+<head>
+</head>
+
+<body id = 'thebody'>
+
+<strong>Happy Path (Link and the sages seal Ganon in the Sacred Realm)</strong><br/>
+{"buttons": ["Link Wins", "Ganon Loses"], 
+"fields": [{"name": "Boot Type", "default": "lead"}, "Tunic Color"],
+"selects": [["Forest", "Fire", "Water", "Shadow", "Spirit"], ["Power", "Courage", "Wisdom"]]}
+
+<br/><br/><strong>Bad JSON (Ganon tricks Zelda into opening the Temple of Time)</strong><br/>
+{some invalid json}
+
+<br/><br/><strong>Bad Buttons (The gorons are turned against Link)</strong><br/>
+<em>Not an array:</em> {"buttons": "some string"}
+<br/><em>Not all strings:</em> {"buttons": ["Link Wins", 3]}
+
+<br/><br/><strong>Bad Fields (The shadow temple corrupts the town)</strong><br/>
+<em>Not an array:</em> {"fields": "some string"}
+<br/><em>Missing Name:</em> {"fields": [{"name2": "Boot Type", "default": "lead"}, "Tunic Color"]}
+<br/><em>Simple field isn't string</em> {"fields": [{"name": "Boot Type", "default": "lead"}, 3]}
+
+<br/><br/><strong>Bad Selects (Ganon takes the triforce of wisdom)</strong><br/>
+<em>Not an array:</em> {"selects": "some string"}
+<br/><em>Select options isn't array</em> {"selects": [[3, 4], "other string"]}
+<br/><em>Select options element isn't a string or number</em> {"selects": [[3, 4, {"object": "mine"}]]}
+</body>
+</html>

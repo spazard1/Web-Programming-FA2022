@@ -1,0 +1,54 @@
+﻿.size0 {
+    max-height: 300px;
+    max-width: 300px;
+}
+
+.size1 {
+    max-height: 400px;
+    max-width: 400px;
+}
+
+.size2 {
+    max-height: 600px;
+    max-width: 600px;
+}
+
+.size3 {
+    max-height: 800px;
+    max-width: 800px;
+}
+
+.size4 {
+    max-height: 1200px;
+    max-width: 1200px;
+}
+
+.size5 {
+    max-height: 1600px;
+    max-width: 1600px;
+}
+
+#progressOutline {
+    background-color: white;
+    border: 2px solid black;
+    width: 40%;
+    height: 1em;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    position: absolute;
+    top: 5%;
+    left: 1%;
+    display: none;
+}
+
+#progress {
+    background-color: blue;
+    height: 100%;
+    transition: width ease 1s;
+}
+
+#error {
+    color: red;
+    display: none;
+    font-size: 1.5em;
+}
