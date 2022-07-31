@@ -12,7 +12,7 @@ namespace CloudStorage.Controllers
     [Route("api/[controller]")]
     public class ImagesController : Controller
     {
-        private IImageTableStorage imageTableStorage;
+        private readonly IImageTableStorage imageTableStorage;
 
         public ImagesController(IImageTableStorage imageTableStorage)
         {

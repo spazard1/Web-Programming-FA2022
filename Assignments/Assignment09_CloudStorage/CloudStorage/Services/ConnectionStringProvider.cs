@@ -1,11 +1,16 @@
 ﻿using CloudStorage.Services;
-using System.IO;
 
 namespace CloudStorage.Services
 {
     public class ConnectionStringProvider : IConnectionStringProvider
     {
-        public string ConnectionString => throw new InvalidDataException("Replace this exception with the connection string from moodle");
+
+        public ConnectionStringProvider(SecretProvider secretProvider)
+        {
+            this.ConnectionString = secretProvider.LoadSecretAsync("webprogrammingconnectionstring").Result;
+        }
+
+        public string ConnectionString { get; }
 
         public string AccountKey {
             get {

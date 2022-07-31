@@ -16,7 +16,9 @@ namespace CloudStorage.Services
 
         Task<bool> DeleteAsync(string id);
 
-        string GetUploadUrl(ImageTableEntity image);
+        string GetBlobUrl();
+
+        string GetUploadUrl(string fileName);
 
         string GetDownloadUrl(ImageTableEntity image);
 

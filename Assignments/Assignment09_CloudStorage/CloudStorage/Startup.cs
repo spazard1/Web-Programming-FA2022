@@ -36,6 +36,8 @@ namespace CloudStorage
             services.AddSingleton<IUserNameProvider, UserNameProvider>();
             services.AddSingleton<ICloudStorageAccountProvider, CloudStorageAccountProvider>();
             services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
+            services.AddSingleton<KeyVaultProvider>();
+            services.AddSingleton<SecretProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
