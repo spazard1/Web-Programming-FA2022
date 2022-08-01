@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 using CloudStorage.Models;
-using Microsoft.Azure.Cosmos.Table;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using Azure.Storage.Blobs.Specialized;
 using Azure.Storage;
 using Azure.Storage.Blobs.Models;
-using System.Web;
+using Azure.Data.Tables;
+using Azure;
 
 namespace CloudStorage.Services
 {
@@ -17,20 +16,19 @@ namespace CloudStorage.Services
     {
         private readonly IUserNameProvider userNameProvider;
         private readonly IConnectionStringProvider connectionStringProvider;
-        private CloudStorageAccount cloudStorageAccount;
-        private CloudTable imageTable;
-        private BlobServiceClient blobServiceClient;
-        private BlobContainerClient blobContainerClient;
+        private readonly TableClient imageTable;
+        private readonly BlobServiceClient blobServiceClient;
+        private readonly BlobContainerClient blobContainerClient;
 
-        public ImageTableStorage(IUserNameProvider userNameProvider, ICloudStorageAccountProvider cloudStorageAccountProvider, IConnectionStringProvider connectionStringProvider)
+        public ImageTableStorage(IUserNameProvider userNameProvider,
+            IBlobServiceClientProvider blobServiceClientProvider,
+            IConnectionStringProvider connectionStringProvider)
         {
             this.userNameProvider = userNameProvider;
             this.connectionStringProvider = connectionStringProvider;
-            cloudStorageAccount = cloudStorageAccountProvider.CloudStorageAccount;
-            var tableClient = cloudStorageAccount.CreateCloudTableClient();
-            imageTable = tableClient.GetTableReference(userNameProvider.UserName);
+            imageTable = new(connectionStringProvider.ConnectionString, userNameProvider.UserName);
 
-            blobServiceClient = cloudStorageAccountProvider.BlobServiceClient;
+            blobServiceClient = blobServiceClientProvider.BlobServiceClient;
             blobContainerClient = blobServiceClient.GetBlobContainerClient(userNameProvider.UserName);
         }
 
@@ -42,8 +40,7 @@ namespace CloudStorage.Services
         
         public async Task<ImageTableEntity> GetAsync(string id)
         {
-            TableResult retrievedResult = await imageTable.ExecuteAsync(TableOperation.Retrieve<ImageTableEntity>(this.userNameProvider.UserName, id));
-            return (ImageTableEntity) retrievedResult.Result;
+            return await imageTable.GetEntityAsync<ImageTableEntity>(this.userNameProvider.UserName, id);
         }
 
         public async Task<ImageTableEntity> AddOrUpdateAsync(ImageTableEntity image)
@@ -53,19 +50,13 @@ namespace CloudStorage.Services
                 image.Id = Guid.NewGuid().ToString();
                 image.UserName = this.userNameProvider.UserName;
             }
-            await imageTable.ExecuteAsync(TableOperation.InsertOrReplace(image));
+            await imageTable.UpsertEntityAsync(image);
             return image;
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task DeleteAsync(string id)
         {
-            var imageTableEntity = await GetAsync(id);
-            if (imageTableEntity == null)
-            {
-                return false;
-            }
-            await imageTable.ExecuteAsync(TableOperation.Delete(imageTableEntity));
-            return true;
+            await imageTable.DeleteEntityAsync(this.userNameProvider.UserName, id);
         }
 
         public string GetBlobUrl()
@@ -76,56 +67,33 @@ namespace CloudStorage.Services
         public string GetUploadUrl(string fileName)
         {
             // Create a SAS token that's valid for one hour.
-            BlobSasBuilder sasBuilder = new BlobSasBuilder()
-            {
-                BlobContainerName = blobContainerClient.Name,
-                Resource = "c",
-            };
-
-            sasBuilder.StartsOn = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(15));
-            sasBuilder.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
-            sasBuilder.SetPermissions(BlobContainerSasPermissions.Write);
-
-            // Create a SAS token that's valid for one hour.
-            BlobSasBuilder sasBuilderBlob = new BlobSasBuilder()
+            BlobSasBuilder sasBuilderBlob = new()
             {
                 BlobContainerName = blobContainerClient.Name,
                 BlobName = fileName,
                 Resource = "b",
+                StartsOn = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(15)),
+                ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
             };
-            sasBuilderBlob.StartsOn = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(15));
-            sasBuilderBlob.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
             sasBuilderBlob.SetPermissions(BlobSasPermissions.Write | BlobSasPermissions.Add | BlobSasPermissions.Create);
 
             // Use the key to get the SAS token.
             var sasToken = sasBuilderBlob.ToSasQueryParameters(new StorageSharedKeyCredential(blobServiceClient.AccountName, connectionStringProvider.AccountKey)).ToString();
 
             return blobContainerClient.GetBlockBlobClient(fileName).Uri + "?" + sasToken;
-            //return blobServiceClient.Uri + "?" + sasToken;
         }
 
         public string GetDownloadUrl(ImageTableEntity image)
         {
-            // Create a SAS token that's valid for one hour.
-            BlobSasBuilder sasBuilder = new BlobSasBuilder()
-            {
-                BlobContainerName = blobContainerClient.Name,
-                Resource = "c",
-            };
-
-            sasBuilder.StartsOn = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(15));
-            sasBuilder.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
-            sasBuilder.SetPermissions(BlobContainerSasPermissions.Read);
-
-            // Create a SAS token that's valid for one hour.
-            BlobSasBuilder sasBuilderBlob = new BlobSasBuilder()
+            // Create a SAS token for an image
+            BlobSasBuilder sasBuilderBlob = new()
             {
                 BlobContainerName = blobContainerClient.Name,
                 BlobName = image.Id,
                 Resource = "b",
+                StartsOn = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(15)),
+                ExpiresOn = DateTimeOffset.UtcNow.AddHours(8)
             };
-            sasBuilderBlob.StartsOn = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(15));
-            sasBuilderBlob.ExpiresOn = DateTimeOffset.UtcNow.AddHours(1);
             sasBuilderBlob.SetPermissions(BlobSasPermissions.Read);
 
             // Use the key to get the SAS token.
@@ -136,49 +104,27 @@ namespace CloudStorage.Services
 
         public async IAsyncEnumerable<ImageTableEntity> GetAllImagesAsync()
         {
-            var imageTableResults = new List<ImageTableEntity>();
+            AsyncPageable<ImageTableEntity> queryResults =
+                imageTable.QueryAsync<ImageTableEntity>(filter: $"PartitionKey eq '{this.userNameProvider.UserName}'");
 
-            TableQuery<ImageTableEntity> tableQuery = new TableQuery<ImageTableEntity>();
-
-            TableContinuationToken continuationToken = null;
-
-            do
+            await foreach (var imageResult in queryResults)
             {
-                TableQuerySegment<ImageTableEntity> tableQueryResult =
-                    await imageTable.ExecuteQuerySegmentedAsync(tableQuery, continuationToken);
-
-                continuationToken = tableQueryResult.ContinuationToken;
-
-                foreach (var imageResult in tableQueryResult.Results)
+                if (imageResult.UploadComplete)
                 {
-                    if (imageResult.UploadComplete)
-                    {
-                        yield return imageResult;
-                    }
+                    yield return imageResult;
                 }
-
-                imageTableResults.AddRange(tableQueryResult.Results.Where(result => result.UploadComplete));
-            } while (continuationToken != null);
+            }
         }
 
         public async Task PurgeAsync()
         {
-            var imageTableResults = new List<ImageTableEntity>();
+            AsyncPageable<ImageTableEntity> queryResults =
+                imageTable.QueryAsync<ImageTableEntity>(filter: $"PartitionKey eq '{this.userNameProvider.UserName}'");
 
-            TableQuery<ImageTableEntity> tableQuery = new TableQuery<ImageTableEntity>();
-
-            TableContinuationToken tableContinuationToken = null;
-
-            do
+            await foreach (var imageResult in queryResults)
             {
-                TableQuerySegment<ImageTableEntity> tableQueryResult =
-                    await imageTable.ExecuteQuerySegmentedAsync(tableQuery, tableContinuationToken);
-
-                tableContinuationToken = tableQueryResult.ContinuationToken;
-
-                var tasks = tableQueryResult.Results.Select(async result => await imageTable.ExecuteAsync(TableOperation.Delete(result)));
-                await Task.WhenAll(tasks);
-            } while (tableContinuationToken != null);
+                _ = imageTable.DeleteEntityAsync(imageResult.PartitionKey, imageResult.RowKey);
+            }
 
             string continuationToken = null;
 

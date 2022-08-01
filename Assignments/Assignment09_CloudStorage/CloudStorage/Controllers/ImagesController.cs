@@ -71,11 +71,8 @@ namespace CloudStorage.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
-            if (await this.imageTableStorage.DeleteAsync(id))
-            {
-                return StatusCode((int) HttpStatusCode.NoContent);
-            }
-            return StatusCode((int) HttpStatusCode.NotFound);
+            await this.imageTableStorage.DeleteAsync(id);
+            return StatusCode((int)HttpStatusCode.NoContent);
         }
 
         [HttpDelete]
