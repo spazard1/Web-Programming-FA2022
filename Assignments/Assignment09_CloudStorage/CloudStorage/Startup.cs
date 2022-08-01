@@ -34,7 +34,7 @@ namespace CloudStorage
 
             services.AddSingleton<IImageTableStorage, ImageTableStorage>();
             services.AddSingleton<IUserNameProvider, UserNameProvider>();
-            services.AddSingleton<ICloudStorageAccountProvider, CloudStorageAccountProvider>();
+            services.AddSingleton<IBlobServiceClientProvider, BlobServiceClientProvider>();
             services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
             services.AddSingleton<KeyVaultProvider>();
             services.AddSingleton<SecretProvider>();
@@ -43,14 +43,14 @@ namespace CloudStorage
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(policy =>
+                policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+            );
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseDefaultFiles();
-
-            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
