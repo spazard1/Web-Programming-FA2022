@@ -11,7 +11,6 @@ function App() {
   const [apiVersion] = useState("?api-version=1.0");
   const [error, setError] = useState();
   const [name, setName] = useState("");
-  //const [description, setDescription] = useState("");
   const inputFileRef = useRef();
   const [images, setImages] = useState([]);
   const [imageSize, setImageSize] = useState(0);
@@ -39,7 +38,6 @@ function App() {
         },
         body: JSON.stringify({
             Name: name,
-            //Description: description
         })
     })
     .then(response => response.json())
@@ -86,8 +84,6 @@ function App() {
     });
   }, [apiVersion]);
 
-  // Description: <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-
 
   return (
     <div className="App">
@@ -116,7 +112,6 @@ function App() {
         {images.map(image => 
           <div key={image.id}>
             <img src={mainUrl + "/" + image.id} className={"size" + imageSize} alt={image.name} />
-            {image.description}
           </div>
         )}
       </div>
