@@ -1,0 +1,25 @@
+
+GET - https://myserver.com/api/students
+  all the students
+
+GET - https://myserver.com/api/students/5
+  returns the details of the 5th student
+
+GET - https://myserver.com/api/students/5/addresses
+  return all addresses of the 5th student
+
+GET - https://myserver.com/api/students/5/addresses/1
+  return the first address of the 5th student
+
+POST - https://myserver.com/api/students
+  create a student
+
+PUT - https://myserver.com/api/students/5
+  replace the 5th student's data
+
+PATCH - https://myserver.com/api/students/5
+  edit the 5th student's data
+
+POST - https://myserver.com/api/students/5/addresses
+  create a new address for the 5th student
+
