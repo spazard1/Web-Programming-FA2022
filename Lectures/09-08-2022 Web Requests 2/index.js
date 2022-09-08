@@ -32,7 +32,12 @@ How we talk to the server:
 3. Headers
   Metadata of the request
   e.g. the size of the request, the content type, the time of the request
-
+  Content-Type: this is the mime type of the body (usually application/json)
+  Accept: please server respond with this type, (it's a mime type)
+  Content-Length: int in bytes of the size of the payload/body
+  User-Agent: web browser identification
+  Authorization: sending your credentials to the server
+  
 
 How the server responds to us:
 
@@ -45,6 +50,35 @@ How the server responds to us:
 3. Headers
   Metadata of the response
   e.g. the current time of the server, the size of the response, the content type of the response, etc.
+  Location: used with redirect requests, where are you supposed to go? this is a url.
+  Content-Type: this is the mime type of the body (usually application/json)
+  Content-Length: int in bytes of the size of the payload/body
+  Date: The time of the response
+
+
+Status Codes
+
+  XYY - X type of the status code, and then YY is the sub type
+
+  100
+
+  200 - OK
+    201 - Created, meaning a successful POST request, some new data on the server
+    202 - Accepted, work is not done yet, long running task on the server
+    204 - NoContent, body is empty, usually for DELETE requests
+
+  300 - Redirects "The content is somewhere else"
+    301 - Moved Permanently, the page is never going to exist here again
+    307 - Moved Temporarily, the page is going to be here, but look elsewhere for now
+
+  400 - BadRequest, "It's YOUR fault" (the client's fault)
+    401 - Unauthorized, invalid credentials, such as bad password
+    403 - Forbidden, you credentials WERE accepted, but you can't do that thing (not enough permissions)
+    404 - NotFound
+
+  500 - InternalServerError, "It's the SERVER's fault"
+    likely the server threw an exception
+    503 - Service Unavailable, too many requests, server is out of resources
 
 */
 
