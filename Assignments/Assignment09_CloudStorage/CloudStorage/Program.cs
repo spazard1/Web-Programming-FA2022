@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using CloudStorage.Services;
+using Microsoft.AspNetCore.Builder;
 
 namespace CloudStorage
 {
@@ -14,11 +7,48 @@ namespace CloudStorage
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+            var builder = WebApplication.CreateBuilder(args);
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            // Add services to the container.
+
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSingleton<IImageTableStorage, ImageTableStorage>();
+            builder.Services.AddSingleton<IUserNameProvider, UserNameProvider>();
+            builder.Services.AddSingleton<IBlobServiceClientProvider, BlobServiceClientProvider>();
+            builder.Services.AddSingleton<IConnectionStringProvider, ConnectionStringProvider>();
+            builder.Services.AddSingleton<KeyVaultProvider>();
+            builder.Services.AddSingleton<SecretProvider>();
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseDefaultFiles();
+
+            app.UseStaticFiles();
+
+            app.UseCors(policy =>
+                policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+            );
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthorization();
+
+            app.MapControllers();
+
+            app.Run();
+
+            app.Services.GetRequiredService<IImageTableStorage>().StartupAsync();
+        }
     }
 }
