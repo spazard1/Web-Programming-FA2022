@@ -3,18 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Students.Entities
 {
-    public class StudentEntity
+    public class AdminStudentEntity
     {
 
-        public StudentEntity()
+        public AdminStudentEntity()
         {
 
         }
 
-        public StudentEntity(StudentModel model)
+        public AdminStudentEntity(StudentModel model)
         {
             this.FirstName = model.FirstName;
             this.LastName = model.LastName;
+            this.Grade = model.Grade;
         }
 
         [MinLength(3)]
@@ -23,13 +24,16 @@ namespace Students.Entities
         [MinLength(3)]
         public string LastName { get; set; }
 
+        public string Grade { get; set; }
+
 
         public StudentModel ToModel()
         {
             return new StudentModel()
             {
                 FirstName = this.FirstName,
-                LastName = this.LastName
+                LastName = this.LastName,
+                Grade = this.Grade
             };
         }
     }

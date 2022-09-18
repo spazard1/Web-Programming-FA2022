@@ -1,4 +1,4 @@
-const mainUrl = "https://localhost:7266/api/students";
+const mainUrl = "https://localhost:50436/api/students";
 
 simpleSuccess = (data) => {
   document.getElementById("results").innerHTML = JSON.stringify(data);

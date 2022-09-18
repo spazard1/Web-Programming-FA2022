@@ -22,6 +22,12 @@ namespace Students
                 app.UseSwaggerUI();
             }
 
+            app.UseCors(policy =>
+                policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
+
             app.UseDefaultFiles();
 
             app.UseStaticFiles();
