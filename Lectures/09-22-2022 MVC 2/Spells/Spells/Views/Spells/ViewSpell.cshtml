@@ -1,0 +1,15 @@
+﻿@model SpellModel
+
+@{
+    ViewData["Title"] = "Spells Index";
+}
+
+<div class="text-center">
+    Here is my spell: @Model.Spell
+
+    <form method="post" action="/spells/delete">
+        <input type="submit" value="Delete spell?" />
+
+        <input type="hidden" name="spellIndex" value="@ViewData["id"]" />
+    </form>
+</div>
