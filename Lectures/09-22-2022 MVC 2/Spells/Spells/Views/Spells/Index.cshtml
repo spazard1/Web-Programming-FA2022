@@ -1,4 +1,6 @@
-﻿@{
+﻿@model SpellsDatabase
+
+@{
     ViewData["Title"] = "Spells Index";
 }
 
@@ -6,8 +8,14 @@
     Here are my list of spells.
 
     <ol>
-        @for(var i = 1; i <= 1000; i++) {
-            <li>The spell number was: @i</li>
+        @for(var i = 0; i < Model.Count(); i++) {
+            <li>@Model.Get(i).Spell - <a href="spells/viewSpell/@i">View Spell</a></li>
         }
     </ol>
+
+    <form method="post" action="spells/add">
+        Spell Name: <input type="text" name="spellName" />
+
+        <input type="submit" value="Add Spell" />
+    </form>
 </div>
