@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Hobbits.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class HobbitsController : Controller
     {
 
