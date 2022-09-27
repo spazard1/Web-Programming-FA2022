@@ -10,7 +10,7 @@ namespace Hobbits.Services
     {
         private readonly List<HobbitModel> hobbits = new List<HobbitModel>()
         {
-            new HobbitModel() { Name = "Frodo", Group = "hobbits" },
+            new HobbitModel() { Name = "Frodo" + Guid.NewGuid().ToString(), Group = "hobbits" },
             new HobbitModel() { Name = "Sam", Group = "hobbits" },
             new HobbitModel() { Name = "Merry", Group = "hobbits" },
             new HobbitModel() { Name = "Pippin", Group = "hobbits" }
