@@ -1,4 +1,5 @@
 ﻿using Hobbits.Entities;
+using Hobbits.Filters;
 using Hobbits.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,8 @@ namespace Hobbits.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(RequestIdFilter))]
+    [ServiceFilter(typeof(RequestLoggingFilter))]
     public class HobbitsController : Controller
     {
 
@@ -28,21 +31,17 @@ namespace Hobbits.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            this.hobbitLogger.WriteLine("GET ALL was started");
-
             // pretend this is a database call
-            var result = Json(hobbitsDatabase.GetAll().Select(hobbit => new HobbitEntity(hobbit)));
+            var hobbitEntities = hobbitsDatabase.GetAll().Select(hobbit => new HobbitEntity(hobbit));
 
-            this.hobbitLogger.WriteLine("GET ALL was finished");
+            this.hobbitLogger.WriteLine("Number of Hobbits: " + hobbitEntities.Count());
 
-            return result;
+            return Json(hobbitEntities);
         }
 
         [HttpGet("{index:int}")]
         public IActionResult Get(int index)
         {
-            this.hobbitLogger.WriteLine("GET ONE was started");
-
             if (index < 0 || index >= hobbitsDatabase.Count)
             {
                 return StatusCode((int)HttpStatusCode.NotFound);
@@ -54,8 +53,6 @@ namespace Hobbits.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] HobbitEntity hobbitEntity)
         {
-            this.hobbitLogger.WriteLine("POST was started");
-
             hobbitsDatabase.Add(hobbitEntity.ToModel());
 
             return Json(hobbitEntity);

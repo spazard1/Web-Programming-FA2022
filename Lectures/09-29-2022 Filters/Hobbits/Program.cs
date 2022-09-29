@@ -1,3 +1,4 @@
+using Hobbits.Filters;
 using Hobbits.Services;
 
 namespace Hobbits
@@ -13,15 +14,17 @@ namespace Hobbits
             builder.Services.AddSingleton<HobbitsDatabase>();
 
             #if DEBUG
-            builder.Services.AddTransient<IHobbitLogger, DebugLogger>();
-            #endif
+            builder.Services.AddScoped<IHobbitLogger, DebugLogger>();
+#endif
 
-            #if RELEASE
-            builder.Services.AddTransient<IHobbitLogger, DatabaseLogger>();
-            #endif
+#if RELEASE
+            builder.Services.AddScoped<IHobbitLogger, DatabaseLogger>();
+#endif
 
-            builder.Services.AddTransient<IRequestIdGenerator, RequestIdGenerator>();
-            builder.Services.AddTransient<TimeOfDayProvider>();
+            builder.Services.AddScoped<IRequestIdGenerator, RequestIdGenerator>();
+            builder.Services.AddScoped<TimeOfDayProvider>();
+
+            builder.Services.AddScoped<RequestLoggingFilter>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
