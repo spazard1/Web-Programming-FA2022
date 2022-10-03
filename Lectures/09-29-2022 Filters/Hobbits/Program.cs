@@ -25,6 +25,7 @@ namespace Hobbits
             builder.Services.AddScoped<TimeOfDayProvider>();
 
             builder.Services.AddScoped<RequestLoggingFilter>();
+            builder.Services.AddScoped<RequestIdFilter>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
