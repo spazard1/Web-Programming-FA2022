@@ -29,6 +29,7 @@ namespace Mario.Services
             await policy.ExecuteAsync(async () =>
             {
                 var response = await httpClient.GetAsync("https://webprogrammingmario.azurewebsites.net/api/mario/jump");
+                response.EnsureSuccessStatusCode();
                 responseString = await response.Content.ReadAsStringAsync();
             });
 
