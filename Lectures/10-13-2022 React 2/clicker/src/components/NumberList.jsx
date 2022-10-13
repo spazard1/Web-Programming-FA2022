@@ -3,7 +3,6 @@ import { Button } from "react-bootstrap";
 
 import "./NumberList.css";
 
-
 const NumberList = () => {
   const [numbers, setNumbers] = useState([]);
 
@@ -22,7 +21,7 @@ const NumberList = () => {
       <Button onClick={addNumber}>Add Number</Button>
       <div className="numberListContainer">
         {numbers.map((element, index) => 
-          <div onClick={() => deleteNumber(index)}>{element}</div>
+          <div key={element} onClick={() => deleteNumber(index)}>{element}</div>
         )}
       </div>
     </>
