@@ -10,7 +10,7 @@ const App = () => {
     setTeamScores((currentTeamScores) => {
       const newTeamScores = {...currentTeamScores};
       newTeamScores[teamName] = score;
-      return currentTeamScores;
+      return newTeamScores;
     });
   }, []);
 
