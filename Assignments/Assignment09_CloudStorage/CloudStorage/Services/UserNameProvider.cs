@@ -7,6 +7,6 @@ namespace CloudStorage.Services
 {
     public class UserNameProvider : IUserNameProvider
     {
-        public string UserName => throw new InvalidOperationException("Replace this exception with your username.");
+        public string UserName => "yacste";
     }
 }
