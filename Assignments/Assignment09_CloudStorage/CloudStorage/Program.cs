@@ -46,9 +46,9 @@ namespace CloudStorage
 
             app.MapControllers();
 
-            app.Run();
-
             app.Services.GetRequiredService<IImageTableStorage>().StartupAsync();
+
+            app.Run();
         }
     }
 }
