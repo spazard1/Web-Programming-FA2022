@@ -9,6 +9,7 @@ using Azure.Storage;
 using Azure.Storage.Blobs.Models;
 using Azure.Data.Tables;
 using Azure;
+using System.Text.RegularExpressions;
 
 namespace CloudStorage.Services
 {
@@ -26,6 +27,13 @@ namespace CloudStorage.Services
         {
             this.userNameProvider = userNameProvider;
             this.connectionStringProvider = connectionStringProvider;
+
+            var match = Regex.Match(userNameProvider.UserName, @"^[a-z0-9]+$");
+            if (!match.Success)
+            {
+                throw new InvalidDataException("Your username must be all lowercase letters and numbers with no special characters.");
+            }
+
             imageTable = new(connectionStringProvider.ConnectionString, userNameProvider.UserName);
 
             blobServiceClient = blobServiceClientProvider.BlobServiceClient;
