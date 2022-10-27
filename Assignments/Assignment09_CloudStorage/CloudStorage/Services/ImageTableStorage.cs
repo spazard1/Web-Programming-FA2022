@@ -140,7 +140,7 @@ namespace CloudStorage.Services
             {
                 var resultSegment = blobContainerClient.GetBlobs().AsPages(continuationToken);
 
-                foreach (Azure.Page<BlobItem> blobPage in resultSegment)
+                foreach (Page<BlobItem> blobPage in resultSegment)
                 {
                     foreach (BlobItem blobItem in blobPage.Values)
                     {
