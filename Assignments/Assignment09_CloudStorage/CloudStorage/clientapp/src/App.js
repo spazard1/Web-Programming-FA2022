@@ -1,20 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BlockBlobClient } from '@azure/storage-blob';
-import { Button, ProgressBar } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  const mainUrl = "https://localhost:53037/api/images";
+  const portNumber = 0; /* put your visual studio port number here */;
+  const mainUrl = "https://localhost:" + portNumber + "/api/images";
 
-  const [apiVersion] = useState("?api-version=1.0");
   const [error, setError] = useState();
   const [name, setName] = useState("");
-  const inputFileRef = useRef();
   const [images, setImages] = useState([]);
-  const [imageSize, setImageSize] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const inputFileRef = useRef();
+
+  useEffect(() => {
+    if (portNumber <= 0) {
+      setError("You need to set your port number in App.js.");
+    }
+  }, [portNumber]);
 
   const onClickUpload = useCallback(() => {
     let createdImageId;
@@ -31,7 +35,7 @@ function App() {
         return;
     }
 
-    fetch(mainUrl + apiVersion, {
+    fetch(mainUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -45,45 +49,46 @@ function App() {
       createdImageId = createdImageDetails.id;
       const file = inputFileRef.current.files[0];
       const blockBlobClient = new BlockBlobClient(createdImageDetails.uploadUrl);
-      return blockBlobClient.uploadData(file, {
-        onProgress: (ev) => {
-          setProgress(Math.round(ev.loadedBytes / file.size * 100));
-        }
-      });
+      return blockBlobClient.uploadData(file);
     }).then(() => {
-      return fetch(mainUrl + "/" + createdImageId + "/uploadComplete" + apiVersion, {
+      return fetch(mainUrl + "/" + createdImageId + "/uploadComplete", {
         method: "PUT"
       })
     }).then(uploadCompleteResult => {
       return uploadCompleteResult.json();
     }).then(uploadCompleteJson => {
-      setProgress(0);
       setImages(ims => [...ims, uploadCompleteJson]);
     });
-  }, [name, apiVersion]);
+  }, [mainUrl, name]);
 
   useEffect(() => {
-    if (!apiVersion || !mainUrl) {
+    if (!mainUrl || portNumber <= 0) {
       return;
     }
 
-    fetch(mainUrl + apiVersion)
-      .then(response => response.json())
+    fetch(mainUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Not OK status code: " + response.status);
+        }
+        return response.json()
+      })
       .then(responseJson => {
         setImages(responseJson);
+      }).catch((error) => {
+        setError("Failed to load images on start: " + error);
       });
-  }, [apiVersion]);
+  }, [mainUrl]);
 
   const onClickPurge = useCallback(() => {
-    fetch(mainUrl + apiVersion, {
+    fetch(mainUrl, {
       method: "DELETE"
     }).then((result) => {
       if (result.ok) {
         setImages([]);
       }
     });
-  }, [apiVersion]);
-
+  }, [mainUrl]);
 
   return (
     <div className="App">
@@ -96,14 +101,7 @@ function App() {
       <div className="controlsContainer">
         <Button onClick={onClickUpload}>Upload</Button>
         <Button onClick={onClickPurge}>Purge Images</Button>
-        <input type="range" value={imageSize} onChange={(e) => setImageSize(e.target.value)} min="0" max="5" />
       </div>
-
-      {progress > 0 &&
-        <div className="progressContainer">
-          <ProgressBar now={progress} />
-        </div>
-      }
 
       {error &&
         <div className="error">{error}</div>
@@ -111,7 +109,7 @@ function App() {
       <div className="imagesContainer">
         {images.map(image => 
           <div key={image.id}>
-            <img src={mainUrl + "/" + image.id} className={"size" + imageSize} alt={image.name} />
+            <img src={mainUrl + "/" + image.id} alt={image.name} />
           </div>
         )}
       </div>

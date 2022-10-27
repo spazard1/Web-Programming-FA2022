@@ -14,40 +14,6 @@
   justify-content: center;
 }
 
-.progressContainer {
-  width: 30%;
-}
-
-.size0 {
-  max-height: 200px;
-  max-width: 200px;
-}
-
-.size1 {
-  max-height: 300px;
-  max-width: 300px;
-}
-
-.size2 {
-  max-height: 400px;
-  max-width: 400px;
-}
-
-.size3 {
-  max-height: 500px;
-  max-width: 500px;
-}
-
-.size4 {
-  max-height: 600px;
-  max-width: 600px;
-}
-
-.size5 {
-  max-height: 700px;
-  max-width: 700px;
-}
-
 .imagesContainer {
   display: flex;
   flex-wrap: wrap;
