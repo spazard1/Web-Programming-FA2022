@@ -14,10 +14,10 @@ namespace CloudStorage.Entities
 
         }
 
-        public ImageEntity(ImageTableEntity tableEntity)
+        public ImageEntity(ImageModel imageModel)
         {
-            this.Name = tableEntity.Name;
-            this.Id = tableEntity.Id;
+            this.Name = imageModel.Name;
+            this.Id = imageModel.Id;
         }
 
         [MinLength(3)]
@@ -32,9 +32,9 @@ namespace CloudStorage.Entities
         /// Note that this method automatically sets the a new Id for the image.
         /// </summary>
         /// <returns></returns>
-        public ImageTableEntity ToModel()
+        public ImageModel ToModel()
         {
-            return new ImageTableEntity()
+            return new ImageModel()
             {
                 Name = this.Name,
                 Id = Guid.NewGuid().ToString()
