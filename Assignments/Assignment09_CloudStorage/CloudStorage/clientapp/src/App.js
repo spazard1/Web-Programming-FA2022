@@ -21,7 +21,6 @@ function App() {
   }, [portNumber]);
 
   const onClickUpload = useCallback(() => {
-    let createdImageId;
     setError("");
 
     if (!name || name.length < 3) {
@@ -46,18 +45,17 @@ function App() {
     })
     .then(response => response.json())
     .then(createdImageDetails => {
-      createdImageId = createdImageDetails.id;
       const file = inputFileRef.current.files[0];
       const blockBlobClient = new BlockBlobClient(createdImageDetails.uploadUrl);
       return blockBlobClient.uploadData(file);
     }).then(() => {
-      return fetch(mainUrl + "/" + createdImageId + "/uploadComplete", {
-        method: "PUT"
-      })
+      // TODO: Send an request to your server that the image upload is complete.
+      // Hint: You will need the id of the new image that was created in order to send an upload complete request.
+      // That id comes from the POST response that created your new image.
     }).then(uploadCompleteResult => {
       return uploadCompleteResult.json();
     }).then(uploadCompleteJson => {
-      setImages(ims => [...ims, uploadCompleteJson]);
+      // TODO: Use the uploadCompleteJson response to add the new image to the list of images that are displayed on the page.
     });
   }, [mainUrl, name]);
 
@@ -107,11 +105,9 @@ function App() {
         <div className="error">{error}</div>
       }
       <div className="imagesContainer">
-        {images.map(image => 
-          <div key={image.id}>
-            <img src={mainUrl + "/" + image.id} alt={image.name} />
-          </div>
-        )}
+        {/* TODO: use the map function to create one img tag per image in the response from the server.
+         * Hint: the "img" element causes the browser to make a GET request to whatever URL is in the src tag.
+        */}
       </div>
     </div>
   );
