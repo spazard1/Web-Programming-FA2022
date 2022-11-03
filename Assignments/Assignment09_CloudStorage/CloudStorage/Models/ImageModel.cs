@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace CloudStorage.Models
 {
-    public class ImageTableEntity : ITableEntity
+
+    public class ImageModel : ITableEntity
     {
-        public ImageTableEntity()
+        public ImageModel()
         {
 
         }
 
-        public ImageTableEntity(string userName, string name)
+        public ImageModel(string userName, string name)
         {
             this.UserName = userName;
             this.Name = name;
@@ -36,14 +37,5 @@ namespace CloudStorage.Models
         public string Name { get; set; }
 
         public bool UploadComplete { get; set; }
-
-        public ImageEntity ToEntity()
-        {
-            return new ImageEntity()
-            {
-                Id = this.Id,
-                Name = this.Name
-            };
-        }
     }
 }

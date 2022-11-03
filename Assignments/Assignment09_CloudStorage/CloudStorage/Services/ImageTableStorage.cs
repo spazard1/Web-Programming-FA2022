@@ -46,12 +46,12 @@ namespace CloudStorage.Services
             await blobContainerClient.CreateIfNotExistsAsync();
         }
         
-        public async Task<ImageTableEntity> GetAsync(string id)
+        public async Task<ImageModel> GetAsync(string id)
         {
-            return await imageTable.GetEntityAsync<ImageTableEntity>(this.userNameProvider.UserName, id);
+            return await imageTable.GetEntityAsync<ImageModel>(this.userNameProvider.UserName, id);
         }
 
-        public async Task<ImageTableEntity> AddOrUpdateAsync(ImageTableEntity image)
+        public async Task<ImageModel> AddOrUpdateAsync(ImageModel image)
         {
             if (string.IsNullOrWhiteSpace(image.Id))
             {
@@ -91,7 +91,7 @@ namespace CloudStorage.Services
             return blobContainerClient.GetBlockBlobClient(fileName).Uri + "?" + sasToken;
         }
 
-        public string GetDownloadUrl(ImageTableEntity image)
+        public string GetDownloadUrl(ImageModel image)
         {
             // Create a SAS token for an image
             BlobSasBuilder sasBuilderBlob = new()
@@ -110,10 +110,10 @@ namespace CloudStorage.Services
             return blobContainerClient.GetBlockBlobClient(image.Id).Uri + "?" + sasToken;
         }
 
-        public async IAsyncEnumerable<ImageTableEntity> GetAllImagesAsync()
+        public async IAsyncEnumerable<ImageModel> GetAllImagesAsync()
         {
-            AsyncPageable<ImageTableEntity> queryResults =
-                imageTable.QueryAsync<ImageTableEntity>(filter: $"PartitionKey eq '{this.userNameProvider.UserName}'");
+            AsyncPageable<ImageModel> queryResults =
+                imageTable.QueryAsync<ImageModel>(filter: $"PartitionKey eq '{this.userNameProvider.UserName}'");
 
             await foreach (var imageResult in queryResults)
             {
@@ -126,8 +126,8 @@ namespace CloudStorage.Services
 
         public async Task PurgeAsync()
         {
-            AsyncPageable<ImageTableEntity> queryResults =
-                imageTable.QueryAsync<ImageTableEntity>(filter: $"PartitionKey eq '{this.userNameProvider.UserName}'");
+            AsyncPageable<ImageModel> queryResults =
+                imageTable.QueryAsync<ImageModel>(filter: $"PartitionKey eq '{this.userNameProvider.UserName}'");
 
             await foreach (var imageResult in queryResults)
             {

@@ -28,7 +28,7 @@ namespace CloudStorage.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(string id)
         {
-            var imageTableEntity = await this.imageTableStorage.GetAsync(id);
+            var imageModel = await this.imageTableStorage.GetAsync(id);
 
             // TODO: check to make sure imageModel is not null
             // if it is null (i.e. it doesn't exist), return not found
@@ -46,25 +46,25 @@ namespace CloudStorage.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] ImageEntity imageEntity)
         {
-            // TODO: Convert the image entity into an image table entity, then add it into the database.
-            // Remember to set the username property on the image table entity before it is added.
+            // TODO: Convert the image entity into an image model, then add it into the database.
+            // Remember to set the username property on the image model before it is added.
 
             // TODO: Return a new image entity to the client. Set the uploadUrl first so they can start the image upload.
-            // Be careful here to return a new image entity based on the image table entity that you created, and not the image entity that was sent to your controller.
+            // Be careful here to return a new image entity based on the image model that you created, and not the image entity that was sent to your controller.
             return null;
         }
 
         [HttpPut("{id}/uploadComplete")]
         public async Task<IActionResult> UploadCompleteAsync(string id)
         {
-            // TODO: Get the image table entity from the database by its id.
+            // TODO: Get the image model from the database by its id.
 
-            // TODO: check to make sure image table entity is not null
+            // TODO: check to make sure image model is not null
             // if it is null (i.e. it doesn't exist), return a NotFound status code
 
             // TODO: Set UploadComplete to true on the imageModel and then save it.
 
-            // TODO: Convert the image table entity into an ImageEntity and return it as JSON.
+            // TODO: Convert the image model into an ImageEntity and return it as JSON.
             return null;
         }
 

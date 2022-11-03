@@ -10,9 +10,9 @@ namespace CloudStorage.Services
     {
         Task StartupAsync();
 
-        Task<ImageTableEntity> GetAsync(string id);
+        Task<ImageModel> GetAsync(string id);
 
-        Task<ImageTableEntity> AddOrUpdateAsync(ImageTableEntity image);
+        Task<ImageModel> AddOrUpdateAsync(ImageModel image);
 
         Task DeleteAsync(string id);
 
@@ -20,9 +20,9 @@ namespace CloudStorage.Services
 
         string GetUploadUrl(string fileName);
 
-        string GetDownloadUrl(ImageTableEntity image);
+        string GetDownloadUrl(ImageModel image);
 
-        IAsyncEnumerable<ImageTableEntity> GetAllImagesAsync();
+        IAsyncEnumerable<ImageModel> GetAllImagesAsync();
 
         Task PurgeAsync();
     }
