@@ -1,0 +1,35 @@
+URL
+	pros
+		With just the URL, it's possible to see what version the user is using
+	
+	cons
+		User might try to change the URL, and might get it wrong
+		URLs then get stale
+
+Headers
+	pros
+		keeps your URL and body "cleaner"; "hides" the version from the user
+	
+	cons
+		harder to code, since you need code to set the header (can't use a regular GET browser request)
+
+Body
+	pros
+		keep adding more information to the entity as needed
+	
+	cons
+		Must have entities aware of api versions, even though that isn't user data
+		Must read the JSON stream in order to get the api-version
+		
+		
+What does api-version look like?
+
+Most common
+2022-11-08
+
+2.1.0.1
+
+2.1-Beta
+1.0-Alpha1
+
+
