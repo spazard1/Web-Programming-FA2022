@@ -1,0 +1,52 @@
+Certificate
+
+  .cer or .pfx
+
+  1. Public key
+    Everyone sees and knows this key
+    .cer only has a public key
+    .pfx has a private key, this is installed onto the server itself
+
+  2. Private key
+    - RSA
+    - 2^2048
+
+  3. Subject
+    - CN=www.myserver.net
+    - CN=www.google.com
+
+    Alternative names
+      CN=www.webprogrammingthequest.net,www.webprogrammingthequestNEW.net
+      *.google.net
+  
+  4. Signature
+    - This comes from a certificate authority
+
+webprogrammingthequest.net
+  Digicert signs my cert
+
+makecert.exe -ks 2048 -a RSA -sub="CN=www.google.com"
+
+
+DNS
+  Domain Name Service
+
+  7 top level domains, originally 
+
+  DNS servers map ip address to friendly names
+
+  www.google.com
+    .com -> google -> www
+
+  
+  A -> ip v4 address
+  AAAA -> ip v6 address 2001:4343::0001
+  Namespace -> google, com
+  CNAME -> point one URL to a different URL
+    webprogrammingthequest.net -> webprogrammingthequestNEW.net
+  TXT -> a text string, usually used for domain ownership verification
+
+  I buy this:
+    webprogrammingthequest.net
+
+  I want to buy a certificate for webprogrammingthequest.net
