@@ -1,0 +1,48 @@
+Logging Levels
+
+5 - Trace/Diagnostics
+  LOG EVERYTHING, methods starting/stopping, return values from functions
+
+4 - Debug
+  Where do you think your code MIGHT fail?
+
+3 - Information
+  An actual user thing happened; i.e. a controller finished running, a user was created in the database, etc.
+
+2 - Warnings
+  Not an actual problem yet, but could be. 
+
+1 - Error
+  An actual problem, often an exception that is thrown
+
+0 - Critical
+  Entire server failure, maybe couldn't boot up
+
+
+Optional
+-1 Failure Audit
+  Someone tried to login who was not authorized
+
+
+What do we log?
+  Request ids
+  exception stack traces
+  metadata, headers, status codes, http verb, query string, etc
+
+  NEVER PII (personal identifiable information)
+  email addresses, home address, phone number, etc., name, name of documents
+
+  EUII (end-user identifiable information)
+
+
+How long do we keep logs?
+  30-90 days
+
+
+Answer:
+  2 examples for each of these levels of something you would log from assignments you've done in this class
+
+Answer:
+  What's worse? False positives, or false negatives?
+
+
