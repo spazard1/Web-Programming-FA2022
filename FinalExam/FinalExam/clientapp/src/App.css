@@ -1,0 +1,42 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.error {
+  color: red;
+  font-size: 1.5em;
+}
+
+.loginContainer {
+  margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1vh;
+  text-align: center;
+}
+
+.boardGameContainer {
+  display: flex;
+  gap: 1vh;
+  flex-direction: column;
+}
+
+.boardGame {
+  border: 2px solid cyan;
+  padding: 3px;
+  display: flex;
+  gap: 2vw;
+}
+
+.boardGameAddContainer {
+  margin-top: 3vh;
+  display: flex;
+  gap: 1vh;
+  flex-direction: column;
+}
